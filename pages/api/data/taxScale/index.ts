@@ -12,8 +12,9 @@ const MAPPED_TABLE_KEYS = {
 }
 
 export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
-    const currentPath = __dirname.replace('.next\\server\\', '')
-    const workbook = XLSX.readFile(path.join(currentPath, '/taxScale/taxScale.xlsx'));
+    const currentPath = path.resolve('./public')
+    const workbook = XLSX.readFile(path.join(currentPath, '/taxScale.xlsx'));
+    
     delete workbook.Sheets.Trabalho_Dependente['!margins']
     delete workbook.Sheets.Trabalho_Dependente['!merges']
     delete workbook.Sheets.Trabalho_Dependente['!ref']
