@@ -1,5 +1,6 @@
 import path from 'path';
 import XLSX from 'xlsx';
+import type { NextApiRequest, NextApiResponse } from 'next'
 
 const MAPPED_TABLE_KEYS = {
     'NÃO CASADO': 'single',
@@ -10,14 +11,13 @@ const MAPPED_TABLE_KEYS = {
     'CASADO DOIS TITULARES - DEFICIENTE': 'married_two_incomes_handycap'
 }
 
-
-export default async function handler(_req, res) {
+export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
     const currentPath = __dirname.replace('.next\\server\\', '')
     const workbook = XLSX.readFile(path.join(currentPath, '/taxScale/taxScale.xlsx'));
     delete workbook.Sheets.Trabalho_Dependente['!margins']
     delete workbook.Sheets.Trabalho_Dependente['!merges']
     delete workbook.Sheets.Trabalho_Dependente['!ref']
-    
+
     const filteredValues = Object.entries(workbook.Sheets.Trabalho_Dependente)
         .map(entry => ({ [entry[0]]: entry[1].v }))
         .filter(value =>
