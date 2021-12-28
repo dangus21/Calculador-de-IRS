@@ -1,10 +1,12 @@
 import { ECivilStatus, TFormValues } from '@ui/Form/types';
+import { MINIMUM_WAGE } from 'shared/constants';
 import { getIRSTaxScale } from './getIRSTaxScale';
 import { getSalaryRanks, TGetSalaryRanks } from './getSalaryRank';
 
 export enum EIRSOperation {
     PAY = 'pay',
     RECEIVE = 'receive',
+    ISENT = 'isent',
     INITIAL = 'initial',
     ERROR = 'error'
 }
@@ -26,13 +28,20 @@ function calculateIRS({ formValues, irsTable }: TCalculateIRS): TIRSPrediction {
 
     const isMarried = formValues.civilStatus === ECivilStatus.MARRIED
 
+    if (!isMarried && formValues.salary.first <= MINIMUM_WAGE) {
+        return {
+            operation: EIRSOperation.ISENT,
+            amount: 0
+        }
+    }
+
     const fiscalMonths = 14;
     const specificDeductions = isMarried ? 4104 * 2 : 4104;
 
-    
+
     const annualSalaryBase = (formValues.salary.first + formValues.salary.second) * fiscalMonths;
     const annualSalaryMinusSpecifics = annualSalaryBase - specificDeductions;
-    
+
     const yearlyIRSPaid = getSalaryRanks({ formValues, irsTable }) * fiscalMonths;
     const annualSalary = isMarried ? annualSalaryMinusSpecifics / 2 : annualSalaryMinusSpecifics;
 
@@ -45,8 +54,14 @@ function calculateIRS({ formValues, irsTable }: TCalculateIRS): TIRSPrediction {
     const estimatedIRS = yearlyIRSPaid - liquidColectables;
 
     return estimatedIRS > 0 ?
-        { operation: EIRSOperation.RECEIVE, amount: Number(estimatedIRS.toFixed(2)) } :
-        { operation: EIRSOperation.PAY, amount: Number(Math.abs(estimatedIRS).toFixed(2)) };
+        {
+            operation: EIRSOperation.RECEIVE,
+            amount: Number(estimatedIRS.toFixed(2))
+        } :
+        {
+            operation: EIRSOperation.PAY,
+            amount: Number(Math.abs(estimatedIRS).toFixed(2))
+        };
 }
 
 export { calculateIRS }

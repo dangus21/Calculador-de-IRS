@@ -8,7 +8,7 @@ function Toggle(props: TToggle) {
 
 	useEffect(() => {
 		wasClicked && props.onClick && props.onClick(active)
-	}, [active, wasClicked])
+	}, [active, props, wasClicked])
 
 	return (
 		<div
@@ -16,8 +16,7 @@ function Toggle(props: TToggle) {
 			onClick={() => {
 				setWasClicked(true);
 				setActive(!active);
-			}}
-		>
+			}}>
 			<div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
 				<div
 					className={

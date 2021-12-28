@@ -3,7 +3,7 @@ import { CheckBox, Radio, Toggle } from '@ui/Button'
 import { ECivilStatus, EFieldTypes, EValueTypes, TFieldIds, TFormconditionsMultiple, TFormField, TFormValues, TReducer } from './types';
 import { Indented } from '@ui/Indented';
 import { Label } from '@ui/Label';
-import { Field } from '@ui/Label copy';
+import { Field } from '@ui/Field';
 
 function adaptValue(event: HTMLInputElement['value']) {
     return Number.isNaN(Number(event)) ? event : Number(event);
@@ -17,10 +17,15 @@ function validateconditions(form: TFormValues, conditions: TFormconditionsMultip
     return validation;
 }
 
-function renderSalaryField(field: TFormField, formValues: TFormValues, dispatch: Dispatch<TReducer['action']>) {
+function renderSalaryField(
+    field: TFormField,
+    formValues: TFormValues,
+    errors: any,
+    dispatch: Dispatch<TReducer['action']>
+) {
     if (formValues.civilStatus) {
         return (
-            <Field>
+            <Field error={errors[field.id]} id={field.id}>
                 <Label id={field.id} title={field.title} />
                 <Indented>
                     {
@@ -49,7 +54,6 @@ function renderSalaryField(field: TFormField, formValues: TFormValues, dispatch:
                             ) :
                             (
                                 <div>
-                                    <Label id={field.id} title={field.title} small />
                                     <input
                                         key={JSON.stringify(field)}
                                         onChange={({ currentTarget }) => {
@@ -74,14 +78,19 @@ function renderSalaryField(field: TFormField, formValues: TFormValues, dispatch:
     }
 }
 
-function renderFieldElement(field: TFormField, formValues: TFormValues, dispatch: Dispatch<TReducer['action']>) {
+function renderFieldElement(
+    field: TFormField,
+    formValues: TFormValues,
+    errors: any,
+    dispatch: Dispatch<TReducer['action']>
+) {
     if (field.id === TFieldIds.SALARY) {
-        return renderSalaryField(field, formValues, dispatch)
+        return renderSalaryField(field, formValues, errors, dispatch)
     }
 
     if (field.type === EFieldTypes.NUMBER || field.type === EFieldTypes.TEXT) {
         return (
-            <Field>
+            <Field error={errors[field.id]} id={field.id}>
                 <Label id={field.id} title={field.title} />
                 <div>
                     <input
@@ -101,7 +110,7 @@ function renderFieldElement(field: TFormField, formValues: TFormValues, dispatch
 
     if (field.type === EFieldTypes.BOOLEAN) {
         return (
-            <Field>
+            <Field error={errors[field.id]} id={field.id}>
                 <Label id={field.id} title={field.title} />
                 <Indented classes="toggleGroup">
                     <Toggle
@@ -119,7 +128,7 @@ function renderFieldElement(field: TFormField, formValues: TFormValues, dispatch
 
     if (field.type === EFieldTypes.CHECKBOX) {
         return (
-            <Field>
+            <Field error={errors[field.id]} id={field.id}>
                 <Label id={field.id} title={field.title} />
                 <Indented classes="checkboxGroup">
                     <CheckBox
@@ -139,7 +148,7 @@ function renderFieldElement(field: TFormField, formValues: TFormValues, dispatch
 
     if (field.type === EFieldTypes.MULTIPLE) {
         return (
-            <Field>
+            <Field error={errors[field.id]} id={field.id}>
                 <Label id={field.id} title={field.title} />
                 {
                     (field.options || []).map(option => (
@@ -161,7 +170,7 @@ function renderFieldElement(field: TFormField, formValues: TFormValues, dispatch
 
     if (field.type === EFieldTypes.RADIO) {
         return (
-            <Field>
+            <Field error={errors[field.id]} id={field.id}>
                 <Label id={field.id} title={field.title} />
                 <Indented classes="radioGroup">
                     {
@@ -188,7 +197,7 @@ function renderFieldElement(field: TFormField, formValues: TFormValues, dispatch
     if (field.type === EFieldTypes.RADIO_CONDITIONAL) {
         if (validateconditions(formValues, field.conditions)) {
             return (
-                <Field>
+                <Field error={errors[field.id]} id={field.id}>
                     <Label id={field.id} title={field.title} />
                     <Indented classes="radioGroup">
                         {

@@ -18,7 +18,7 @@
     "xlsx": "^0.17.4"
   },
   "devDependencies": {
-    "@types/node": "16.11.7",
+    "@types/node": "^16.11.7",
     "@types/react": "17.0.34",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
     "@typescript-eslint/parser": "^5.3.1",
@@ -26,6 +26,7 @@
     "eslint": "7",
     "eslint-config-next": "12.0.3",
     "eslint-plugin-react": "^7.27.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-unused-imports": "^2.0.0",
     "postcss": "^8.3.5",
     "tailwindcss": "^2.2.4",

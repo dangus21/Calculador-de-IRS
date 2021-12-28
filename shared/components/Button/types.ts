@@ -1,6 +1,7 @@
 export type TButton = {
     onClick: (e?: any) => void;
     children: React.ReactNode;
+    isDisabled?: boolean;
 };
 
 export type TToggle = {
@@ -13,7 +14,7 @@ export type TCheckBox = {
 };
 
 export type TRadio = {
-    onClick: (e?:any) => void;
+    onClick: (e?: any) => void;
     children: React.ReactNode;
     option: string;
     name: string;

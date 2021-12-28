@@ -3,11 +3,13 @@ import { TFormValues } from "@ui/Form/types";
 export const initialState = {
     civilStatus: null,
     salary: {
-        first: 0,
-        second: 0
+        first: null,
+        second: null
     },
     handycap: false,
-    dependents: 0,
-    predictedDeductions: 0,
+    dependents: null,
+    predictedDeductions: null,
     titulares: null
 } as TFormValues;
+
+export const MINIMUM_WAGE = 705;

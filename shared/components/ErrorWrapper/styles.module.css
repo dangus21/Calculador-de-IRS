@@ -1,0 +1,13 @@
+.errorWrapper {
+    border: 2px #d45b5b solid;
+    position: relative;
+    margin-bottom: 30px;
+}
+.errorWrapper::after {
+    content: "Campo obrigatório";
+    position: absolute;
+    background-color: #d45b5b;
+    color: white;
+    padding: 3px 10px;
+    left: -2px;
+}

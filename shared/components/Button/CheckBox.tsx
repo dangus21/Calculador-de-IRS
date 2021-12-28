@@ -1,13 +1,19 @@
-import { useState, useEffect } from "react"
+import { useState, useCallback } from "react"
 import type { TCheckBox } from "./types"
 
-function CheckBox(props: TCheckBox) {
+function CheckBox({onClick, children}: TCheckBox) {
     const [active, setActive] = useState<boolean>(false)
-    const [wasClicked, setWasClicked] = useState<boolean>(false)
 
-    useEffect(() => {
-        wasClicked && props.onClick && props.onClick(active)
-    }, [active, wasClicked])
+    const onClickHandler = useCallback(
+        () => {
+            if(onClick){
+                onClick(active)
+                return;
+            }
+            setActive(active => !active)
+        },
+        [active, onClick] 
+    )
 
     return (
         <div>
@@ -15,13 +21,10 @@ function CheckBox(props: TCheckBox) {
                 <input
                     type="checkbox"
                     className="form-checkbox"
-                    onClick={() => {
-                        setWasClicked(!wasClicked);
-                        setActive(!active);
-                    }}
+                    onClick={onClickHandler}
                 />
                 <span className="ml-2">
-                    {props.children}
+                    {children}
                 </span>
             </label>
         </div>
