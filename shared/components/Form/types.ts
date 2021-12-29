@@ -1,25 +1,25 @@
 export enum EFieldTypes {
-    TEXT = 'text',
-    NUMBER = 'number',
-    BOOLEAN = 'boolean',
-    CHECKBOX = 'checkbox',
-    MULTIPLE = 'multiple',
-    RADIO_CONDITIONAL = 'radio_conditional',
-    RADIO = 'radio',
-    SALARY = 'salary',
+    TEXT = "text",
+    NUMBER = "number",
+    BOOLEAN = "boolean",
+    CHECKBOX = "checkbox",
+    MULTIPLE = "multiple",
+    RADIO_CONDITIONAL = "radio_conditional",
+    RADIO = "radio",
+    SALARY = "salary",
 }
 
 export enum EValueTypes {
-    GENERIC = 'generic',
+    GENERIC = "generic",
 }
 
 export enum TFieldIds {
-    SALARY = 'salary',
-    CIVILSTATUS = 'civilStatus',
-    HANDYCAP = 'handycap',
-    DEPENDENTS = 'dependents',
-    PREDICTED_DEDUCTIONS = 'predictedDeductions',
-    TITULARES = 'titulares',
+    SALARY = "salary",
+    CIVILSTATUS = "civilStatus",
+    HANDYCAP = "handycap",
+    DEPENDENTS = "dependents",
+    PREDICTED_DEDUCTIONS = "predictedDeductions",
+    TITULARES = "titulares",
 }
 
 export type TFormconditionsMultiple = {
@@ -53,13 +53,13 @@ export type TFormValues = {
 };
 
 export enum ECivilStatus {
-    SINGLE = 'single',
-    MARRIED = 'married',
+    SINGLE = "single",
+    MARRIED = "married",
 }
 
 type GenericValue = {
-    id: 'generic';
-    value: string | number;
+    id: "generic";
+    value: string | number | boolean;
 };
 
 type MultipleValue = {
@@ -71,7 +71,7 @@ type MultipleValue = {
 export type TReducer = {
     state: TFormValues;
     action: {
-        type: TFormField['title'];
+        type: TFormField["title"];
         content: GenericValue | MultipleValue;
         case?: string;
     }

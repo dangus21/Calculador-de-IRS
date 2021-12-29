@@ -1,7 +1,7 @@
 import { initialState } from "shared/constants";
 import { EFieldTypes, TReducer } from "./types";
 
-function reducer(state: TReducer['state'], action: TReducer['action']): TReducer['state'] {
+function reducer(state: TReducer["state"], action: TReducer["action"]): TReducer["state"] {
     switch (action.case) {
         case EFieldTypes.RADIO_CONDITIONAL:
             return {

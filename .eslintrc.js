@@ -29,6 +29,7 @@ module.exports = {
         "react/react-in-jsx-scope": "off",
         "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": "error",
-        "comma-dangle": ["error", "never"]
+        "comma-dangle": ["error", "never"],
+        "quotes": [2, "double", { "avoidEscape": true }]
     }
 };

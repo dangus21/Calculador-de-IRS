@@ -9,7 +9,11 @@
     "tsc": "tsc"
   },
   "dependencies": {
+    "@chakra-ui/react": "^1.7.3",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
     "clsx": "^1.1.1",
+    "framer-motion": "^5",
     "next": "12.0.3",
     "react": "17.0.2",
     "react-dom": "17.0.2",

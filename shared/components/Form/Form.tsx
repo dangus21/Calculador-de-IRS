@@ -1,32 +1,33 @@
-import React, { useCallback, useReducer, useState } from 'react';
-import clsx from 'clsx';
-import { Button } from '@ui/Button/Button'
-import { calculateIRS, EIRSOperation, TIRSPrediction } from '@utils/calculateIRS';
-import { initialState } from 'shared/constants';
-import { renderFieldElement } from './renderFieldElement';
-import { TForm, TFieldIds } from './types';
-import { reducer } from './formReducer';
-import useSWR from 'swr'
+import React, { useCallback, useReducer, useState } from "react";
+import clsx from "clsx";
+import { Button } from "@chakra-ui/react"
+import { calculateIRS, EIRSOperation, TIRSPrediction } from "@utils/calculateIRS";
+import { initialState } from "shared/constants";
+import { renderFieldElement } from "./renderFieldElement";
+import { TForm, TFieldIds } from "./types";
+import { reducer } from "./formReducer";
+import useSWR from "swr"
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 function Form(props: TForm) {
     const [formValues, dispatch] = useReducer(reducer, initialState)
+    console.log("LOG ~ file: Form.tsx ~ line 15 ~ formValues", formValues);
     const [errors, setErrors] = useState({})
     const [prediction, setPrediction] = useState<TIRSPrediction>({ operation: EIRSOperation.INITIAL, amount: 0 })
-    const { data } = useSWR('/api/data/taxScale', fetcher)
+    const { data } = useSWR("/api/data/taxScale", fetcher)
     const operationResult = {
         ...(prediction.operation === EIRSOperation.PAY && {
-            color: 'text-red-500',
-            text: 'Pagar'
+            color: "text-red-500",
+            text: "Pagar"
         }),
         ...(prediction.operation === EIRSOperation.RECEIVE && {
-            color: 'text-green-500',
-            text: 'Pagar'
+            color: "text-green-500",
+            text: "Pagar"
         }),
         ...(prediction.operation === EIRSOperation.ISENT && {
-            color: 'text-gray-500',
-            text: 'Isento'
+            color: "text-gray-500",
+            text: "Isento"
         })
     }
 
@@ -41,7 +42,7 @@ function Form(props: TForm) {
                 scopedErrors[TFieldIds.TITULARES] = true
             }
 
-            console.log('LOG ~ file: Form.tsx ~ line 46 ~ formValues', formValues);
+            console.log("LOG ~ file: Form.tsx ~ line 46 ~ formValues", formValues);
             if (formValues[TFieldIds.CIVILSTATUS] && (
                 !formValues[TFieldIds.SALARY]?.first || !formValues[TFieldIds.SALARY]?.second
             )) {
@@ -74,16 +75,17 @@ function Form(props: TForm) {
                 {props.fields.map((field) => (
                     <React.Fragment
                         key={JSON.stringify(field)}>
-                        {renderFieldElement(field, formValues, errors, dispatch)}
+                        {
+                            renderFieldElement(field, formValues, errors, dispatch)
+                        }
                     </React.Fragment>
                 ))}
                 <div className="mt-6 flex">
-                    <Button
-                        onClick={validateForm}>
+                    <Button colorScheme='blue' onClick={validateForm}>
                         {props.saveText}
                     </Button>
                     {
-                        prediction.operation !== 'error' && prediction.operation !== EIRSOperation.INITIAL ?
+                        prediction.operation !== "error" && prediction.operation !== EIRSOperation.INITIAL ?
                             <div
                                 className={
                                     clsx(
@@ -98,7 +100,7 @@ function Form(props: TForm) {
                                         className={
                                             clsx(
                                                 operationResult.color,
-                                                'font-bold'
+                                                "font-bold"
                                             )
                                         }>
                                         {prediction.amount}€

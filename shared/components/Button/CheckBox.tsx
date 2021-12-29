@@ -1,18 +1,18 @@
 import { useState, useCallback } from "react"
 import type { TCheckBox } from "./types"
 
-function CheckBox({onClick, children}: TCheckBox) {
+function CheckBox({ onClick, children }: TCheckBox) {
     const [active, setActive] = useState<boolean>(false)
 
     const onClickHandler = useCallback(
         () => {
-            if(onClick){
+            if (onClick) {
                 onClick(active)
                 return;
             }
             setActive(active => !active)
         },
-        [active, onClick] 
+        [active, onClick]
     )
 
     return (
