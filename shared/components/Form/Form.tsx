@@ -97,7 +97,9 @@ function Form(props: TForm) {
                         {props.saveText}
                     </Button>
                     {
-                        prediction.operation !== "error" && prediction.operation !== EIRSOperation.INITIAL ?
+                        !Object.entries(errors).length &&
+                            prediction.operation !== "error" &&
+                            prediction.operation !== EIRSOperation.INITIAL ?
                             <div
                                 className={
                                     clsx(
