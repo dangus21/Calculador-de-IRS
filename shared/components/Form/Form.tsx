@@ -4,7 +4,7 @@ import { Button } from "@chakra-ui/react"
 import { calculateIRS, EIRSOperation, TIRSPrediction } from "@utils/calculateIRS";
 import { initialState } from "shared/constants";
 import { renderFieldElement } from "./renderFieldElement";
-import { TForm, TFieldIds } from "./types";
+import { TForm, TFieldIds, ECivilStatus } from "./types";
 import { reducer } from "./formReducer";
 import useSWR from "swr"
 
@@ -12,7 +12,6 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 function Form(props: TForm) {
     const [formValues, dispatch] = useReducer(reducer, initialState)
-    console.log("LOG ~ file: Form.tsx ~ line 15 ~ formValues", formValues);
     const [errors, setErrors] = useState({})
     const [prediction, setPrediction] = useState<TIRSPrediction>({ operation: EIRSOperation.INITIAL, amount: 0 })
     const { data } = useSWR("/api/data/taxScale", fetcher)
@@ -31,41 +30,54 @@ function Form(props: TForm) {
         })
     }
 
-    const validateForm = useCallback(
-        () => {
-            const scopedErrors = {} as any;
-            if (!formValues[TFieldIds.CIVILSTATUS]) {
-                scopedErrors[TFieldIds.CIVILSTATUS] = true
-            }
+    const validateForm = useCallback(() => {
+        const scopedErrors = {} as any;
+        if (formValues[TFieldIds.CIVILSTATUS] === null) {
+            scopedErrors[TFieldIds.CIVILSTATUS] = true
+        }
 
-            if (formValues[TFieldIds.CIVILSTATUS] && !formValues[TFieldIds.TITULARES]) {
+        if (formValues[TFieldIds.CIVILSTATUS] === ECivilStatus.SINGLE && (
+            formValues[TFieldIds.SALARY]?.first === null
+        )) {
+            scopedErrors[TFieldIds.SALARY] = true
+        }
+
+        if (formValues[TFieldIds.CIVILSTATUS] === ECivilStatus.MARRIED) {
+            if (formValues[TFieldIds.TITULARES] === null) {
                 scopedErrors[TFieldIds.TITULARES] = true
             }
-
-            console.log("LOG ~ file: Form.tsx ~ line 46 ~ formValues", formValues);
-            if (formValues[TFieldIds.CIVILSTATUS] && (
-                !formValues[TFieldIds.SALARY]?.first || !formValues[TFieldIds.SALARY]?.second
-            )) {
-                scopedErrors[TFieldIds.SALARY] = true
+            if (formValues[TFieldIds.TITULARES] === 1) {
+                if (formValues[TFieldIds.SALARY]?.first === null) {
+                    scopedErrors[TFieldIds.SALARY] = true
+                }
             }
-
-            if (!formValues[TFieldIds.DEPENDENTS]) {
-                scopedErrors[TFieldIds.DEPENDENTS] = true
+            if (formValues[TFieldIds.TITULARES] === 2) {
+                if (
+                    formValues[TFieldIds.SALARY]?.first === null ||
+                    formValues[TFieldIds.SALARY]?.second === null
+                ) {
+                    scopedErrors[TFieldIds.SALARY] = true
+                }
             }
+        }
 
-            if (!formValues[TFieldIds.PREDICTED_DEDUCTIONS]) {
-                scopedErrors[TFieldIds.PREDICTED_DEDUCTIONS] = true
-            }
+        if (formValues[TFieldIds.DEPENDENTS] === null) {
+            scopedErrors[TFieldIds.DEPENDENTS] = true
+        }
 
-            setErrors(scopedErrors)
+        if (formValues[TFieldIds.PREDICTED_DEDUCTIONS] === null) {
+            scopedErrors[TFieldIds.PREDICTED_DEDUCTIONS] = true
+        }
 
-            const hasErrors = Object.entries(errors);
+        setErrors(scopedErrors)
 
-            if (!hasErrors) {
-                setPrediction(calculateIRS({ irsTable: data, formValues }))
-            }
-        },
-        [data, errors, formValues]
+        const hasErrors = Object.entries(scopedErrors).length;
+
+        if (!hasErrors) {
+            setPrediction(calculateIRS({ irsTable: data, formValues }))
+        }
+    },
+        [data, formValues]
     )
 
     return (
