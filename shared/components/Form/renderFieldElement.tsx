@@ -1,9 +1,9 @@
 import { Dispatch } from "react";
 import { ECivilStatus, EFieldTypes, EValueTypes, TFieldIds, TFormconditionsMultiple, TFormField, TFormValues, TReducer } from "./types";
 import { Indented } from "@ui/Indented";
-import { Label } from "@ui/Label";
 import { Field } from "@ui/Field";
 import {
+    Text,
     Input,
     Switch,
     Radio,
@@ -33,14 +33,14 @@ function renderSalaryField(
     if (formValues.civilStatus) {
         return (
             <Field error={errors[field.id]} id={field.id}>
-                <Label id={field.id} title={field.title} />
+                <Text color="#374151" fontSize="md"><b>{field.title}</b></Text>
                 <Indented>
                     {
                         formValues.civilStatus === ECivilStatus.MARRIED && formValues.titulares === 2 ?
                             (
                                 (field.options || []).map(option => (
                                     <div key={JSON.stringify(option)}>
-                                        <Label id={option.id} title={option.title} small />
+                                        <Text color="#374151" fontSize="sm">{option.title}</Text>
                                         <Input
                                             key={JSON.stringify(option)}
                                             onChange={({ currentTarget }) => {
@@ -96,7 +96,7 @@ function renderFieldElement(
     if (field.type === EFieldTypes.NUMBER || field.type === EFieldTypes.TEXT) {
         return (
             <Field error={errors[field.id]} id={field.id}>
-                <Label id={field.id} title={field.title} />
+                <Text color="#374151" fontSize="md"><b>{field.title}</b></Text>
                 <div>
                     <Input
                         onChange={({ currentTarget }) => {
@@ -116,7 +116,7 @@ function renderFieldElement(
     if (field.type === EFieldTypes.BOOLEAN) {
         return (
             <Field error={errors[field.id]} id={field.id}>
-                <Label id={field.id} title={field.title} />
+                <Text color="#374151" fontSize="md"><b>{field.title}</b></Text>
                 <Indented classes="toggleGroup">
                     <Switch
                         size="md"
@@ -133,7 +133,7 @@ function renderFieldElement(
     if (field.type === EFieldTypes.CHECKBOX) {
         return (
             <Field error={errors[field.id]} id={field.id}>
-                <Label id={field.id} title={field.title} />
+                <Text color="#374151" fontSize="md"><b>{field.title}</b></Text>
                 <Indented classes="checkboxGroup">
                     <Checkbox
                         onChange={event => dispatch({
@@ -141,7 +141,7 @@ function renderFieldElement(
                             content: { id: EValueTypes.GENERIC, value: adaptValue(event.target.checked) }
                         })}
                     >
-                        {field.title}
+                        <b>{field.title}</b>
                     </Checkbox>
                 </Indented>
             </Field>
@@ -151,7 +151,7 @@ function renderFieldElement(
     if (field.type === EFieldTypes.MULTIPLE) {
         return (
             <Field error={errors[field.id]} id={field.id}>
-                <Label id={field.id} title={field.title} />
+                <Text color="#374151" fontSize="md"><b>{field.title}</b></Text>
                 {
                     (field.options || []).map(option => (
                         <Checkbox
@@ -173,7 +173,7 @@ function renderFieldElement(
     if (field.type === EFieldTypes.RADIO) {
         return (
             <Field error={errors[field.id]} id={field.id}>
-                <Label id={field.id} title={field.title} />
+                <Text color="#374151" fontSize="md"><b>{field.title}</b></Text>
                 <Indented classes="radioGroup">
                     <RadioGroup>
                         <Stack>
@@ -205,7 +205,7 @@ function renderFieldElement(
         if (validateconditions(formValues, field.conditions)) {
             return (
                 <Field error={errors[field.id]} id={field.id}>
-                    <Label id={field.id} title={field.title} />
+                    <Text color="#374151" fontSize="md"><b>{field.title}</b></Text>
                     <Indented classes="radioGroup">
                         <RadioGroup>
                             <Stack>
