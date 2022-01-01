@@ -1,57 +1,57 @@
-import path from 'path';
-import XLSX from 'xlsx';
-import type { NextApiRequest, NextApiResponse } from 'next'
+import path from "path";
+import XLSX from "xlsx";
+import type { NextApiRequest, NextApiResponse } from "next"
 
 const MAPPED_TABLE_KEYS = {
-    'NÃO CASADO': 'single',
-    'CASADO UNICO TITULAR': 'married_one_income',
-    'CASADO DOIS TITULARES': 'married_two_incomes',
-    'NÃO CASADO - DEFICIENTE': 'single_handycap',
-    'CASADO UNICO TITULAR - DEFICIENTE': 'married_one_income_handycap',
-    'CASADO DOIS TITULARES - DEFICIENTE': 'married_two_incomes_handycap'
+    "NÃO CASADO": "single",
+    "CASADO UNICO TITULAR": "married_one_income",
+    "CASADO DOIS TITULARES": "married_two_incomes",
+    "NÃO CASADO - DEFICIENTE": "single_handycap",
+    "CASADO UNICO TITULAR - DEFICIENTE": "married_one_income_handycap",
+    "CASADO DOIS TITULARES - DEFICIENTE": "married_two_incomes_handycap"
 }
 
 export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
-    const currentPath = path.resolve('./public')
-    const workbook = XLSX.readFile(path.join(currentPath, '/taxScale.xlsx'));
+    const currentPath = path.resolve("./public")
+    const workbook = XLSX.readFile(path.join(currentPath, "/taxScale.xlsx"));
     
-    delete workbook.Sheets.Trabalho_Dependente['!margins']
-    delete workbook.Sheets.Trabalho_Dependente['!merges']
-    delete workbook.Sheets.Trabalho_Dependente['!ref']
+    delete workbook.Sheets.Trabalho_Dependente["!margins"]
+    delete workbook.Sheets.Trabalho_Dependente["!merges"]
+    delete workbook.Sheets.Trabalho_Dependente["!ref"]
 
     const filteredValues = Object.entries(workbook.Sheets.Trabalho_Dependente)
         .map(entry => ({ [entry[0]]: entry[1].v }))
         .filter(value =>
-            Object.values(value)[0] !== 'TABELAS DE RETENÇÃO NA FONTE PARA  O CONTINENTE - 2021' &&
-            Object.values(value)[0] !== 'TABELA I - TRABALHO DEPENDENTE ' &&
-            Object.values(value)[0] !== 'T A B E L A II - TRABALHO DEPENDENTE' &&
-            Object.values(value)[0] !== 'T A B E L A III - TRABALHO DEPENDENTE' &&
-            Object.values(value)[0] !== 'T A B E L A I V - TRABALHO DEPENDENTE' &&
-            Object.values(value)[0] !== 'T A B E L A   V - TRABALHO DEPENDENTE' &&
-            Object.values(value)[0] !== 'T A B E L A VI - TRABALHO DEPENDENTE' &&
-            Object.values(value)[0] !== 'Remuneração Mensal  Euros' &&
-            Object.values(value)[0] !== 'Número de dependentes'
+            Object.values(value)[0] !== "TABELAS DE RETENÇÃO NA FONTE PARA  O CONTINENTE - 2021" &&
+            Object.values(value)[0] !== "TABELA I - TRABALHO DEPENDENTE " &&
+            Object.values(value)[0] !== "T A B E L A II - TRABALHO DEPENDENTE" &&
+            Object.values(value)[0] !== "T A B E L A III - TRABALHO DEPENDENTE" &&
+            Object.values(value)[0] !== "T A B E L A I V - TRABALHO DEPENDENTE" &&
+            Object.values(value)[0] !== "T A B E L A   V - TRABALHO DEPENDENTE" &&
+            Object.values(value)[0] !== "T A B E L A VI - TRABALHO DEPENDENTE" &&
+            Object.values(value)[0] !== "Remuneração Mensal  Euros" &&
+            Object.values(value)[0] !== "Número de dependentes"
         )
 
     const irsTables = [
         {
-            [MAPPED_TABLE_KEYS['NÃO CASADO']]: filteredValues.slice(0, 287)
+            [MAPPED_TABLE_KEYS["NÃO CASADO"]]: filteredValues.slice(0, 287)
         }
         ,
         {
-            [MAPPED_TABLE_KEYS['CASADO UNICO TITULAR']]: filteredValues.slice(287, 582)
+            [MAPPED_TABLE_KEYS["CASADO UNICO TITULAR"]]: filteredValues.slice(287, 582)
         },
         {
-            [MAPPED_TABLE_KEYS['CASADO DOIS TITULARES']]: filteredValues.slice(582, 869)
+            [MAPPED_TABLE_KEYS["CASADO DOIS TITULARES"]]: filteredValues.slice(582, 869)
         },
         {
-            [MAPPED_TABLE_KEYS['NÃO CASADO - DEFICIENTE']]: filteredValues.slice(869, 1116)
+            [MAPPED_TABLE_KEYS["NÃO CASADO - DEFICIENTE"]]: filteredValues.slice(869, 1116)
         },
         {
-            [MAPPED_TABLE_KEYS['CASADO UNICO TITULAR - DEFICIENTE']]: filteredValues.slice(1116, 1355)
+            [MAPPED_TABLE_KEYS["CASADO UNICO TITULAR - DEFICIENTE"]]: filteredValues.slice(1116, 1355)
         },
         {
-            [MAPPED_TABLE_KEYS['CASADO DOIS TITULARES - DEFICIENTE']]: filteredValues.slice(1355, filteredValues.length)
+            [MAPPED_TABLE_KEYS["CASADO DOIS TITULARES - DEFICIENTE"]]: filteredValues.slice(1355, filteredValues.length)
         }
     ].map((baseTable) => {
         const values = Object.entries(baseTable)[0]

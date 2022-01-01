@@ -7,9 +7,7 @@ function reducer(state: TReducer["state"], action: TReducer["action"]): TReducer
             return {
                 ...state,
                 [action.content.id]: action.content.value,
-                salary: {
-                    ...initialState.salary
-                }
+                salary: initialState.salary
             }
         case EFieldTypes.SALARY:
             return {

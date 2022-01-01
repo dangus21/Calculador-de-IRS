@@ -1,6 +1,6 @@
-import 'tailwindcss/tailwind.css'
-import type { AppProps } from 'next/app'
-import { ChakraProvider, extendTheme } from '@chakra-ui/react'
+import "tailwindcss/tailwind.css"
+import type { AppProps } from "next/app"
+import { ChakraProvider, extendTheme } from "@chakra-ui/react"
 
 const colors = {};
 

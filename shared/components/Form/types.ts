@@ -44,7 +44,7 @@ export type TForm = {
 };
 
 export type TFormValues = {
-    salary: { first: number | null, second: number | null } | null;
+    salary: { first: number | null, second: number | null };
     civilStatus: `${ECivilStatus}` | null;
     handycap: boolean;
     dependents: number | null;
