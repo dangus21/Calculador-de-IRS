@@ -7,7 +7,6 @@ import { fields } from "@ui/Form/formFields";
 
 
 const Home: NextPage = () => {
-
 	return (
 		<div className={clsx(styles.container, "bg-indigo-100")}>
 			<Form
