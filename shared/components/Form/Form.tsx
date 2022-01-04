@@ -15,6 +15,7 @@ function Form(props: TForm) {
     const [errors, setErrors] = useState({})
     const [prediction, setPrediction] = useState<TIRSPrediction>({ operation: EIRSOperation.INITIAL, amount: 0 })
     const { data } = useSWR("/api/data/taxScale", fetcher)
+
     const operationResult = {
         ...(prediction.operation === EIRSOperation.PAY && {
             color: "text-red-500",
