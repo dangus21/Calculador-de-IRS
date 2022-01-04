@@ -22,7 +22,7 @@ function Form(props: TForm) {
         }),
         ...(prediction.operation === EIRSOperation.RECEIVE && {
             color: "text-green-500",
-            text: "Pagar"
+            text: "Receber"
         }),
         ...(prediction.operation === EIRSOperation.ISENT && {
             color: "text-gray-500",
