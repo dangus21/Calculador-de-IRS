@@ -15,14 +15,14 @@ function Form(props: TForm) {
     const [formValues, dispatch] = useReducer(reducer, initialState)
     const [errors, setErrors] = useState({})
     const [prediction, setPrediction] = useState<TIRSPrediction>({ operation: EIRSOperation.INITIAL, amount: 0 })
-    const [irsTable, setIrsTable] = useLocalStorage("irsTable", undefined)
-    const { data } = useSWR("/api/data/taxScale", !irsTable ? fetcher : null)
+    // const [irsTable, setIrsTable] = useLocalStorage("irsTable", undefined)
+    const { data: irsTable } = useSWR("/api/data/taxScale", fetcher)
 
-    useEffect(() => {
-        if (data) {
-            setIrsTable(JSON.stringify(data))
-        }
-    }, [setIrsTable, data])
+    // useEffect(() => {
+    //     if (data) {
+    //         setIrsTable(JSON.stringify(data))
+    //     }
+    // }, [setIrsTable, data])
 
     const operationResult = {
         ...(prediction.operation === EIRSOperation.PAY && {

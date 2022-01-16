@@ -8,13 +8,15 @@ const theme = extendTheme({ colors })
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Head>
-      <title>Calculador De IRS</title>
-      <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <>
+      <Head>
+        <title>Calculador De IRS</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <ChakraProvider theme={theme}>
         <Component {...pageProps} />
       </ChakraProvider>
-    </Head>
+    </>
   )
 }
 
