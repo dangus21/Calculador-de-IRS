@@ -17,7 +17,6 @@ function Form(props: TForm) {
     const [prediction, setPrediction] = useState<TIRSPrediction>({ operation: EIRSOperation.INITIAL, amount: 0 });
     const [irsTable, setIrsTable] = useLocalStorage("irsTable", undefined);
     const { data } = useSWR("/api/data/taxScale", !irsTable ? fetcher : null);
-    // const { data: irsTable } = useSWR("/api/data/taxScale", fetcher);
 
     useEffect(() => {
         if (data) {

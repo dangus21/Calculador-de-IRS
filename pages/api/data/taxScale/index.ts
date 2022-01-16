@@ -7,12 +7,12 @@ type InvertResult<T extends Record<PropertyKey, PropertyKey>> = {
 }
 
 const MAPPED_TABLE_KEYS = {
-    "N\u00C3O CASADO": "single",
-    "CASADO UNICO TITULAR": "married_one_income",
-    "CASADO DOIS TITULARES": "married_two_incomes",
-    "N\u00C3O CASADO - DEFICIENTE": "single_handycap",
-    "CASADO UNICO TITULAR - DEFICIENTE": "married_one_income_handycap",
-    "CASADO DOIS TITULARES - DEFICIENTE": "married_two_incomes_handycap"
+    "N\u00C3O CASADO": "single" as "single",
+    "CASADO UNICO TITULAR": "married_one_income" as "married_one_income",
+    "CASADO DOIS TITULARES": "married_two_incomes" as "married_two_incomes",
+    "N\u00C3O CASADO - DEFICIENTE": "single_handycap" as "single_handycap",
+    "CASADO UNICO TITULAR - DEFICIENTE": "married_one_income_handycap" as "married_one_income_handycap",
+    "CASADO DOIS TITULARES - DEFICIENTE": "married_two_incomes_handycap" as "married_two_incomes_handycap"
 };
 
 const MAPPED_TABLE_KEYS_INVERTED = Object.assign(
@@ -104,8 +104,12 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
     }).map((groupedTable) => {
         const values = Object.entries(groupedTable)[0];
         const groupName = values[0];
-        const groupValue = values[1];
-        const chunkedValues = groupValue.reduce((resultArray, item, index) => {
+        const groupedTableGroupValue = values[1];
+        const chunkedValues = groupedTableGroupValue.reduce((
+            resultArray: any,
+            item: { string: string | number },
+            index: number
+        ) => {
             const chunkIndex = Math.floor(index / 8);
 
             if (!resultArray[chunkIndex]) {
@@ -136,7 +140,6 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
 
 
     const irsTablesObj = Object.assign({}, ...irsTables);
-    console.log("LOG ~ file: index.ts ~ line 139 ~ irsTablesObj", JSON.stringify(irsTablesObj));
 
     res.status(200).json(irsTablesObj);
 }
