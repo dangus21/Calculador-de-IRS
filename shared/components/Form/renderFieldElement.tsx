@@ -178,12 +178,12 @@ function renderFieldElement(
                     <RadioGroup>
                         <Stack>
                             {
-                                (field.options || []).map((option) => (
+                                (field.options || []).map((option, index) => (
                                     <Radio
                                         value={option.id}
                                         name={field.id}
                                         option={option.id}
-                                        key={JSON.stringify(option)}
+                                        key={JSON.stringify(`${option}${index}`)}
                                         onChange={(event) => dispatch({
                                             type: field.id,
                                             content: { id: option.type, value: adaptValue(event.target.value) },

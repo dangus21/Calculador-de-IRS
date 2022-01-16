@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer, useState } from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import clsx from "clsx";
 import { Button } from "@chakra-ui/react"
 import { calculateIRS, EIRSOperation, TIRSPrediction } from "@utils/calculateIRS";
@@ -7,6 +7,7 @@ import { renderFieldElement } from "./renderFieldElement";
 import { TForm, TFieldIds, ECivilStatus } from "./types";
 import { reducer } from "./formReducer";
 import useSWR from "swr"
+import { useLocalStorage } from "@utils/useLocalStorage";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -14,7 +15,14 @@ function Form(props: TForm) {
     const [formValues, dispatch] = useReducer(reducer, initialState)
     const [errors, setErrors] = useState({})
     const [prediction, setPrediction] = useState<TIRSPrediction>({ operation: EIRSOperation.INITIAL, amount: 0 })
-    const { data } = useSWR("/api/data/taxScale", fetcher)
+    const [irsTable, setIrsTable] = useLocalStorage("irsTable", undefined)
+    const { data } = useSWR("/api/data/taxScale", !irsTable ? fetcher : null)
+
+    useEffect(() => {
+        if (data) {
+            setIrsTable(JSON.stringify(data))
+        }
+    }, [setIrsTable, data])
 
     const operationResult = {
         ...(prediction.operation === EIRSOperation.PAY && {
@@ -75,10 +83,10 @@ function Form(props: TForm) {
         const hasErrors = Object.entries(scopedErrors).length;
 
         if (!hasErrors) {
-            setPrediction(calculateIRS({ irsTable: data, formValues }))
+            setPrediction(calculateIRS({ irsTable: JSON.parse(irsTable), formValues }))
         }
     },
-        [data, formValues]
+        [irsTable, formValues]
     )
 
     return (
