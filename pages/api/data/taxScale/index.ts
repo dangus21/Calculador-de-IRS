@@ -1,25 +1,39 @@
 import path from "path";
 import XLSX from "xlsx";
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from "next";
 
-const MAPPED_TABLE_KEYS = {
-    "NÃO CASADO": "single",
-    "CASADO UNICO TITULAR": "married_one_income",
-    "CASADO DOIS TITULARES": "married_two_incomes",
-    "NÃO CASADO - DEFICIENTE": "single_handycap",
-    "CASADO UNICO TITULAR - DEFICIENTE": "married_one_income_handycap",
-    "CASADO DOIS TITULARES - DEFICIENTE": "married_two_incomes_handycap"
+type InvertResult<T extends Record<PropertyKey, PropertyKey>> = {
+    [P in keyof T as T[P]]: P
 }
 
+const MAPPED_TABLE_KEYS = {
+    "N\u00C3O CASADO": "single",
+    "CASADO UNICO TITULAR": "married_one_income",
+    "CASADO DOIS TITULARES": "married_two_incomes",
+    "N\u00C3O CASADO - DEFICIENTE": "single_handycap",
+    "CASADO UNICO TITULAR - DEFICIENTE": "married_one_income_handycap",
+    "CASADO DOIS TITULARES - DEFICIENTE": "married_two_incomes_handycap"
+};
+
+const MAPPED_TABLE_KEYS_INVERTED = Object.assign(
+    {},
+    ...Object.entries(MAPPED_TABLE_KEYS).map((value) => {
+        return {
+            [value[1]]: value[0]
+        };
+    })
+) as InvertResult<typeof MAPPED_TABLE_KEYS>;
+
+const offset = 1;
 
 export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
-    const currentPath = path.resolve("./public")
+    const currentPath = path.resolve("./public");
 
     const workbook = XLSX.readFile(path.join(currentPath, "/Tabelas_RF_Continente_2022.xlsx"));
 
-    delete workbook.Sheets.Trabalho_Dependente["!margins"]
-    delete workbook.Sheets.Trabalho_Dependente["!merges"]
-    delete workbook.Sheets.Trabalho_Dependente["!ref"]
+    delete workbook.Sheets.Trabalho_Dependente["!margins"];
+    delete workbook.Sheets.Trabalho_Dependente["!merges"];
+    delete workbook.Sheets.Trabalho_Dependente["!ref"];
 
     const filteredValues = Object.entries(workbook.Sheets.Trabalho_Dependente)
         .map(entry => ({ [entry[0]]: entry[1].v }))
@@ -33,59 +47,81 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
             Object.values(value)[0] !== "T A B E L A VI - TRABALHO DEPENDENTE" &&
             Object.values(value)[0] !== "Remuneração Mensal  Euros" &&
             Object.values(value)[0] !== "Número de dependentes"
-        )
+        );
 
-    console.log("LOG ~ file: index.ts ~ line 25 ~ filteredValues", filteredValues);
+    function findEntryIndex(key: string) {
+        return filteredValues.findIndex(value => {
+            return Object.values(value)[0] === key;
+        });
+    }
+
 
     const irsTables = [
         {
-            [MAPPED_TABLE_KEYS["NÃO CASADO"]]: filteredValues.slice(0, 295)
-        }
-        ,
-        {
-            [MAPPED_TABLE_KEYS["CASADO UNICO TITULAR"]]: filteredValues.slice(296, 590)
+            [MAPPED_TABLE_KEYS["NÃO CASADO"]]: filteredValues.slice(
+                0,
+                findEntryIndex(MAPPED_TABLE_KEYS_INVERTED.married_one_income)
+            )
         },
         {
-            [MAPPED_TABLE_KEYS["CASADO DOIS TITULARES"]]: filteredValues.slice(591, 885)
+            [MAPPED_TABLE_KEYS["CASADO UNICO TITULAR"]]: filteredValues.slice(
+                findEntryIndex(MAPPED_TABLE_KEYS_INVERTED.married_one_income) + offset,
+                findEntryIndex(MAPPED_TABLE_KEYS_INVERTED.married_two_incomes)
+            )
         },
         {
-            [MAPPED_TABLE_KEYS["NÃO CASADO - DEFICIENTE"]]: filteredValues.slice(886, 1132)
+            [MAPPED_TABLE_KEYS["CASADO DOIS TITULARES"]]: filteredValues.slice(
+                findEntryIndex(MAPPED_TABLE_KEYS_INVERTED.married_two_incomes) + offset,
+                findEntryIndex(MAPPED_TABLE_KEYS_INVERTED.single_handycap)
+            )
         },
         {
-            [MAPPED_TABLE_KEYS["CASADO UNICO TITULAR - DEFICIENTE"]]: filteredValues.slice(1133, 1371)
+            [MAPPED_TABLE_KEYS["NÃO CASADO - DEFICIENTE"]]: filteredValues.slice(
+                findEntryIndex(MAPPED_TABLE_KEYS_INVERTED.single_handycap) + offset,
+                findEntryIndex(MAPPED_TABLE_KEYS_INVERTED.married_one_income_handycap)
+            )
         },
         {
-            [MAPPED_TABLE_KEYS["CASADO DOIS TITULARES - DEFICIENTE"]]: filteredValues.slice(1372, filteredValues.length)
+            [MAPPED_TABLE_KEYS["CASADO UNICO TITULAR - DEFICIENTE"]]: filteredValues.slice(
+                findEntryIndex(MAPPED_TABLE_KEYS_INVERTED.married_one_income_handycap) + offset,
+                findEntryIndex(MAPPED_TABLE_KEYS_INVERTED.married_two_incomes_handycap)
+            )
+        },
+        {
+            [MAPPED_TABLE_KEYS["CASADO DOIS TITULARES - DEFICIENTE"]]: filteredValues.slice(
+                findEntryIndex(MAPPED_TABLE_KEYS_INVERTED.married_two_incomes_handycap) + offset,
+                filteredValues.length
+            )
         }
     ].map((baseTable) => {
-        const values = Object.entries(baseTable)[0]
+        const values = Object.entries(baseTable)[0];
         const groupName = values[0];
         const groupValue = values[1];
 
         return {
             [groupName]: groupValue.slice(7)
-        }
+        };
     }).map((groupedTable) => {
-        const values = Object.entries(groupedTable)[0]
+        const values = Object.entries(groupedTable)[0];
         const groupName = values[0];
         const groupValue = values[1];
         const chunkedValues = groupValue.reduce((resultArray, item, index) => {
-            const chunkIndex = Math.floor(index / 8)
+            const chunkIndex = Math.floor(index / 8);
 
             if (!resultArray[chunkIndex]) {
-                resultArray[chunkIndex] = [] // start a new chunk
+                resultArray[chunkIndex] = []; // start a new chunk
             }
 
-            resultArray[chunkIndex].push(item)
+            resultArray[chunkIndex].push(item);
 
-            return resultArray
-        }, [])
+            return resultArray;
+        }, []);
 
         return {
             [groupName]: chunkedValues
-        }
+        };
     }).map((chunkedTable) => {
-        const values = Object.entries(chunkedTable)[0]
+        const values = Object.entries(chunkedTable)[0];
         const groupName = values[0];
         const groupValue = values[1];
         return {
@@ -95,10 +131,12 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
                     dependents: value.slice(2).map(val => Object.values(val)[0])
                 });
             })
-        }
-    })
+        };
+    });
 
 
+    const irsTablesObj = Object.assign({}, ...irsTables);
+    console.log("LOG ~ file: index.ts ~ line 139 ~ irsTablesObj", JSON.stringify(irsTablesObj));
 
-    res.status(200).json(Object.assign({}, ...irsTables))
+    res.status(200).json(irsTablesObj);
 }

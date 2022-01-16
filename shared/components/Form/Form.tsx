@@ -1,28 +1,29 @@
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import clsx from "clsx";
-import { Button } from "@chakra-ui/react"
+import { Button } from "@chakra-ui/react";
 import { calculateIRS, EIRSOperation, TIRSPrediction } from "@utils/calculateIRS";
 import { initialState } from "shared/constants";
 import { renderFieldElement } from "./renderFieldElement";
 import { TForm, TFieldIds, ECivilStatus } from "./types";
 import { reducer } from "./formReducer";
-import useSWR from "swr"
+import useSWR from "swr";
 import { useLocalStorage } from "@utils/useLocalStorage";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 function Form(props: TForm) {
-    const [formValues, dispatch] = useReducer(reducer, initialState)
-    const [errors, setErrors] = useState({})
-    const [prediction, setPrediction] = useState<TIRSPrediction>({ operation: EIRSOperation.INITIAL, amount: 0 })
-    const [irsTable, setIrsTable] = useLocalStorage("irsTable", undefined)
-    const { data } = useSWR("/api/data/taxScale", !irsTable ? fetcher : null)
+    const [formValues, dispatch] = useReducer(reducer, initialState);
+    const [errors, setErrors] = useState({});
+    const [prediction, setPrediction] = useState<TIRSPrediction>({ operation: EIRSOperation.INITIAL, amount: 0 });
+    const [irsTable, setIrsTable] = useLocalStorage("irsTable", undefined);
+    const { data } = useSWR("/api/data/taxScale", !irsTable ? fetcher : null);
+    // const { data: irsTable } = useSWR("/api/data/taxScale", fetcher);
 
     useEffect(() => {
         if (data) {
-            setIrsTable(JSON.stringify(data))
+            setIrsTable(JSON.stringify(data));
         }
-    }, [setIrsTable, data])
+    }, [setIrsTable, data]);
 
     const operationResult = {
         ...(prediction.operation === EIRSOperation.PAY && {
@@ -37,27 +38,27 @@ function Form(props: TForm) {
             color: "text-gray-500",
             text: "Isento"
         })
-    }
+    };
 
     const validateForm = useCallback(() => {
         const scopedErrors = {} as any;
         if (formValues[TFieldIds.CIVILSTATUS] === null) {
-            scopedErrors[TFieldIds.CIVILSTATUS] = true
+            scopedErrors[TFieldIds.CIVILSTATUS] = true;
         }
 
         if (formValues[TFieldIds.CIVILSTATUS] === ECivilStatus.SINGLE && (
             formValues[TFieldIds.SALARY]?.first === null
         )) {
-            scopedErrors[TFieldIds.SALARY] = true
+            scopedErrors[TFieldIds.SALARY] = true;
         }
 
         if (formValues[TFieldIds.CIVILSTATUS] === ECivilStatus.MARRIED) {
             if (formValues[TFieldIds.TITULARES] === null) {
-                scopedErrors[TFieldIds.TITULARES] = true
+                scopedErrors[TFieldIds.TITULARES] = true;
             }
             if (formValues[TFieldIds.TITULARES] === 1) {
                 if (formValues[TFieldIds.SALARY]?.first === null) {
-                    scopedErrors[TFieldIds.SALARY] = true
+                    scopedErrors[TFieldIds.SALARY] = true;
                 }
             }
             if (formValues[TFieldIds.TITULARES] === 2) {
@@ -65,29 +66,29 @@ function Form(props: TForm) {
                     formValues[TFieldIds.SALARY]?.first === null ||
                     formValues[TFieldIds.SALARY]?.second === null
                 ) {
-                    scopedErrors[TFieldIds.SALARY] = true
+                    scopedErrors[TFieldIds.SALARY] = true;
                 }
             }
         }
 
         if (formValues[TFieldIds.DEPENDENTS] === null) {
-            scopedErrors[TFieldIds.DEPENDENTS] = true
+            scopedErrors[TFieldIds.DEPENDENTS] = true;
         }
 
         if (formValues[TFieldIds.PREDICTED_DEDUCTIONS] === null) {
-            scopedErrors[TFieldIds.PREDICTED_DEDUCTIONS] = true
+            scopedErrors[TFieldIds.PREDICTED_DEDUCTIONS] = true;
         }
 
-        setErrors(scopedErrors)
+        setErrors(scopedErrors);
 
         const hasErrors = Object.entries(scopedErrors).length;
 
         if (!hasErrors) {
-            setPrediction(calculateIRS({ irsTable: JSON.parse(irsTable), formValues }))
+            setPrediction(calculateIRS({ irsTable: JSON.parse(irsTable), formValues }));
         }
     },
         [irsTable, formValues]
-    )
+    );
 
     return (
         <section className="w-120 max-w-6xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800 px-16">
@@ -135,7 +136,7 @@ function Form(props: TForm) {
                 </div>
             </form>
         </section >
-    )
+    );
 }
 
-export { Form }
+export { Form };
