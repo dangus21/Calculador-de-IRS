@@ -90,7 +90,7 @@ function Form(props: TForm) {
     );
 
     return (
-        <section className="w-120 max-w-6xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800 px-16">
+        <section className="sm:w-auto md:w-120 max-w-6xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800 px-16">
             <h2 className="text-xl font-semibold text-gray-700 capitalize dark:text-white mb-3">{props.title}</h2>
             <form>
                 {props.fields.map((field) => (
