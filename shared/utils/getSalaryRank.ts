@@ -1,21 +1,5 @@
-import { ECivilStatus, TFormValues } from "@ui/Form/types";
+import { ECivilStatus, TGetSalaryRanks } from "@ui/Form/types";
 
-type TIRSTableEntry = {
-    salary: number,
-    dependents: number[]
-}
-
-export type TGetSalaryRanks = {
-    formValues: TFormValues
-    irsTable: {
-        single: TIRSTableEntry[],
-        married_one_income: TIRSTableEntry[],
-        married_two_incomes: TIRSTableEntry[],
-        single_handycap: TIRSTableEntry[],
-        married_one_income_handycap: TIRSTableEntry[],
-        married_two_incomes_handycap: TIRSTableEntry[],
-    },
-}
 
 function getSalaryRanks({ formValues, irsTable }: TGetSalaryRanks): number {
     const firstWage = formValues?.salary?.first ?? 0;
@@ -32,7 +16,7 @@ function getSalaryRanks({ formValues, irsTable }: TGetSalaryRanks): number {
 
         if (formValues.civilStatus === ECivilStatus.MARRIED) {
             if (formValues.titulares === 1) {
-                const totalSalary = firstWage + secondWage
+                const totalSalary = firstWage + secondWage;
                 const rank = irsTable.married_one_income.find(rank => totalSalary <= rank.salary);
                 const percentage = rank!.dependents[dependents];
 
@@ -59,7 +43,7 @@ function getSalaryRanks({ formValues, irsTable }: TGetSalaryRanks): number {
 
         if (formValues.civilStatus === ECivilStatus.MARRIED) {
             if (formValues.titulares === 1) {
-                const totalSalary = firstWage + secondWage
+                const totalSalary = firstWage + secondWage;
                 const rank = irsTable.married_one_income_handycap.find(rank => totalSalary <= rank.salary);
                 const percentage = rank!.dependents[dependents];
 
@@ -79,4 +63,4 @@ function getSalaryRanks({ formValues, irsTable }: TGetSalaryRanks): number {
     return 0;
 }
 
-export { getSalaryRanks }
+export { getSalaryRanks };

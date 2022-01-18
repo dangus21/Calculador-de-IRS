@@ -40,6 +40,7 @@ export type TForm = {
     children?: React.ReactNode;
     title: string;
     saveText: string;
+    irsTable: TGetSalaryRanks["irsTable"],
     fields: TFormField[];
 };
 
@@ -76,3 +77,20 @@ export type TReducer = {
         case?: string;
     }
 };
+
+type TIRSTableEntry = {
+    salary: number,
+    dependents: number[]
+}
+
+export type TGetSalaryRanks = {
+    formValues: TFormValues
+    irsTable: {
+        single: TIRSTableEntry[],
+        married_one_income: TIRSTableEntry[],
+        married_two_incomes: TIRSTableEntry[],
+        single_handycap: TIRSTableEntry[],
+        married_one_income_handycap: TIRSTableEntry[],
+        married_two_incomes_handycap: TIRSTableEntry[],
+    },
+}

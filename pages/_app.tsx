@@ -1,10 +1,10 @@
-import "tailwindcss/tailwind.css"
-import type { AppProps } from "next/app"
-import { ChakraProvider, extendTheme } from "@chakra-ui/react"
-import Head from "next/head"
+import "tailwindcss/tailwind.css";
+import type { AppProps } from "next/app";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import Head from "next/head";
 const colors = {};
 
-const theme = extendTheme({ colors })
+const theme = extendTheme({ colors });
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
       </ChakraProvider>
     </>
-  )
+  );
 }
 
-export default MyApp
+export default MyApp;

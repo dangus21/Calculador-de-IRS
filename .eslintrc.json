@@ -7,7 +7,9 @@
 		"eslint:recommended",
 		"plugin:react/recommended",
 		"plugin:@typescript-eslint/eslint-recommended",
-		"plugin:react-hooks/recommended"
+		"plugin:react-hooks/recommended",
+		"plugin:@next/next/recommended",
+		"plugin:react/jsx-runtime"
 	],
 	"globals": {
 		"Atomics": "readonly",

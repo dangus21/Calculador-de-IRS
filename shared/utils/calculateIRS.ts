@@ -1,7 +1,7 @@
-import { ECivilStatus, TFormValues } from "@ui/Form/types";
+import { ECivilStatus, TFormValues, TGetSalaryRanks } from "@ui/Form/types";
 import { initialState, MINIMUM_WAGE } from "shared/constants";
 import { getIRSTaxScale } from "./getIRSTaxScale";
-import { getSalaryRanks, TGetSalaryRanks } from "./getSalaryRank";
+import { getSalaryRanks } from "./getSalaryRank";
 
 export enum EIRSOperation {
     PAY = "pay",
@@ -23,7 +23,7 @@ type TCalculateIRS = {
 
 function calculateIRS({ formValues = initialState, irsTable }: TCalculateIRS): TIRSPrediction {
     if (formValues?.salary?.first === 0) {
-        return { operation: "error" }
+        return { operation: "error" };
     }
 
     const isMarried = formValues.civilStatus === ECivilStatus.MARRIED;
@@ -35,7 +35,7 @@ function calculateIRS({ formValues = initialState, irsTable }: TCalculateIRS): T
         return {
             operation: EIRSOperation.ISENT,
             amount: 0
-        }
+        };
     }
 
     const fiscalMonths = 14;
@@ -49,7 +49,7 @@ function calculateIRS({ formValues = initialState, irsTable }: TCalculateIRS): T
     const annualSalary = isMarried ? annualSalaryMinusSpecifics / 2 : annualSalaryMinusSpecifics;
 
 
-    const { tax: irsTax, deductable: irsDeductable } = getIRSTaxScale(annualSalary)
+    const { tax: irsTax, deductable: irsDeductable } = getIRSTaxScale(annualSalary);
 
     const baseColectables = (annualSalary * irsTax) - irsDeductable;
     const colectables = isMarried ? baseColectables * 2 : baseColectables;
@@ -67,4 +67,4 @@ function calculateIRS({ formValues = initialState, irsTable }: TCalculateIRS): T
         };
 }
 
-export { calculateIRS }
+export { calculateIRS };

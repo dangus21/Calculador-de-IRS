@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, { useCallback, useReducer, useState } from "react";
 import clsx from "clsx";
 import { Button } from "@chakra-ui/react";
 import { calculateIRS, EIRSOperation, TIRSPrediction } from "@utils/calculateIRS";
@@ -6,23 +6,12 @@ import { initialState } from "shared/constants";
 import { renderFieldElement } from "./renderFieldElement";
 import { TForm, TFieldIds, ECivilStatus } from "./types";
 import { reducer } from "./formReducer";
-import useSWR from "swr";
-import { useLocalStorage } from "@utils/useLocalStorage";
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 function Form(props: TForm) {
+    const { fields, saveText, title, irsTable } = props;
     const [formValues, dispatch] = useReducer(reducer, initialState);
     const [errors, setErrors] = useState({});
     const [prediction, setPrediction] = useState<TIRSPrediction>({ operation: EIRSOperation.INITIAL, amount: 0 });
-    const [irsTable, setIrsTable] = useLocalStorage("irsTable", undefined);
-    const { data } = useSWR("/api/data/taxScale", !irsTable ? fetcher : null);
-
-    useEffect(() => {
-        if (data) {
-            setIrsTable(JSON.stringify(data));
-        }
-    }, [setIrsTable, data]);
 
     const operationResult = {
         ...(prediction.operation === EIRSOperation.PAY && {
@@ -83,7 +72,7 @@ function Form(props: TForm) {
         const hasErrors = Object.entries(scopedErrors).length;
 
         if (!hasErrors) {
-            setPrediction(calculateIRS({ irsTable: JSON.parse(irsTable), formValues }));
+            setPrediction(calculateIRS({ irsTable: irsTable, formValues }));
         }
     },
         [irsTable, formValues]
@@ -91,9 +80,9 @@ function Form(props: TForm) {
 
     return (
         <section className="sm:w-auto md:w-120 max-w-6xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800 px-16">
-            <h2 className="text-xl font-semibold text-gray-700 capitalize dark:text-white mb-3">{props.title}</h2>
+            <h2 className="text-xl font-semibold text-gray-700 capitalize dark:text-white mb-3">{title}</h2>
             <form>
-                {props.fields.map((field) => (
+                {fields.map((field) => (
                     <React.Fragment
                         key={JSON.stringify(field)}>
                         {
@@ -103,7 +92,7 @@ function Form(props: TForm) {
                 ))}
                 <div className="mt-6 flex">
                     <Button colorScheme='blue' onClick={validateForm}>
-                        {props.saveText}
+                        {saveText}
                     </Button>
                     {
                         !Object.entries(errors).length &&
