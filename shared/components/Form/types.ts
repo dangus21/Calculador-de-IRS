@@ -78,7 +78,7 @@ export type TReducer = {
     }
 };
 
-type TIRSTableEntry = {
+export type TIRSTableEntry = {
     salary: number,
     dependents: number[]
 }
@@ -86,7 +86,7 @@ type TIRSTableEntry = {
 export type TGetSalaryRanks = {
     formValues: TFormValues
     irsTable: {
-        single: TIRSTableEntry[],
+        single: Array<TIRSTableEntry>,
         married_one_income: TIRSTableEntry[],
         married_two_incomes: TIRSTableEntry[],
         single_handycap: TIRSTableEntry[],

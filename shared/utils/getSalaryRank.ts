@@ -1,4 +1,4 @@
-import { ECivilStatus, TGetSalaryRanks } from "@ui/Form/types";
+import { ECivilStatus, TGetSalaryRanks, TIRSTableEntry } from "@ui/Form/types";
 
 
 function getSalaryRanks({ formValues, irsTable }: TGetSalaryRanks): number {
@@ -8,7 +8,12 @@ function getSalaryRanks({ formValues, irsTable }: TGetSalaryRanks): number {
 
     if (!formValues.handycap) {
         if (formValues.civilStatus === ECivilStatus.SINGLE) {
-            const rank = irsTable.single.find(rank => firstWage <= rank.salary);
+            const singleValues = irsTable.single;
+            if (firstWage > singleValues[singleValues.length - 1].salary) {
+                return firstWage * singleValues[singleValues.length - 1].dependents[dependents];
+            }
+
+            const rank = singleValues.find(rank => firstWage <= rank.salary);
             const percentage = rank!.dependents[dependents];
 
             return firstWage * percentage;
@@ -17,7 +22,13 @@ function getSalaryRanks({ formValues, irsTable }: TGetSalaryRanks): number {
         if (formValues.civilStatus === ECivilStatus.MARRIED) {
             if (formValues.titulares === 1) {
                 const totalSalary = firstWage + secondWage;
-                const rank = irsTable.married_one_income.find(rank => totalSalary <= rank.salary);
+                const marriedOneIncome = irsTable.married_one_income;
+
+                if (totalSalary > marriedOneIncome[marriedOneIncome.length - 1].salary) {
+                    return totalSalary * marriedOneIncome[marriedOneIncome.length - 1].dependents[dependents];
+                }
+
+                const rank = marriedOneIncome.find(rank => totalSalary <= rank.salary);
                 const percentage = rank!.dependents[dependents];
 
                 return totalSalary * percentage;
